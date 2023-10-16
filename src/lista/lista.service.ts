@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateListaDto } from './dto/create-lista.dto';
 import { UpdateListaDto } from './dto/update-lista.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,8 +16,22 @@ export class ListaService {
     return await this.listaRepository.find();
   }
   
-  create(createListaDto: CreateListaDto) {
-    return 'This action adds a new lista';
+  async create(createListaDto: CreateListaDto):Promise<Lista> {
+    try{
+      const { nombre, apellido, nacionalidad } = createListaDto;
+      const persona : Lista = await this.listaRepository.save(new Lista(nombre,apellido,nacionalidad));
+      if(!persona){
+        throw new Error('No se pudo crear la persona');
+      }else{
+        return persona;
+      }
+    }
+    catch(error){
+      throw new HttpException({
+          status: HttpStatus.CONFLICT,
+          error: 'Error en Listas - ' + error
+      },HttpStatus.NOT_FOUND);
+    }   
   }
 
   findOne(id: number) {

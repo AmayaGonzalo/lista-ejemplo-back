@@ -8,9 +8,9 @@ import { Lista } from './entities/lista.entity';
 export class ListaController {
   constructor(private readonly listaService: ListaService) {}
 
-  @Post()
-  create(@Body() createListaDto: CreateListaDto) {
-    return this.listaService.create(createListaDto);
+  @Post('nuevo')
+  async createNewPerson(@Body() createListaDto: CreateListaDto):Promise<Lista> {
+    return await this.listaService.create(createListaDto);
   }
 
   @Get()
